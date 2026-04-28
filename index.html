@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda de Viajes Ambulancia</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <section class="login-panel" id="loginPanel">
+      <div class="brand-block">
+        <span class="eyebrow">Control de traslados</span>
+        <h1>Ambulancia de enlace</h1>
+        <p>Agenda viajes, controla el cupo, genera bitacoras del chofer y emite tickets de pasajeros desde una sola pantalla.</p>
+      </div>
+
+      <div class="auth-stack">
+        <form class="login-card" id="loginForm">
+          <h2>Acceso</h2>
+          <p class="helper">Usuario inicial: <strong>admin</strong> | Contrasena: <strong>admin123</strong></p>
+          <label>
+            Usuario
+            <input type="text" id="username" placeholder="Ingresa tu usuario" required>
+          </label>
+          <label>
+            Contrasena
+            <input type="password" id="password" placeholder="Ingresa tu contrasena" required>
+          </label>
+          <button type="submit" class="primary-btn">Entrar al sistema</button>
+          <p class="error-message" id="loginError"></p>
+        </form>
+
+        <form class="login-card register-card" id="registerForm">
+          <h2>Crear usuario</h2>
+          <p class="helper">Registra coordinadores con acceso propio y datos persistentes.</p>
+          <label>
+            Nombre completo
+            <input type="text" id="registerFullName" placeholder="Nombre del responsable" required>
+          </label>
+          <label>
+            Usuario
+            <input type="text" id="registerUsername" placeholder="Minimo 4 caracteres" required>
+          </label>
+          <label>
+            Contrasena
+            <input type="password" id="registerPassword" placeholder="Minimo 6 caracteres" required>
+          </label>
+          <button type="submit" class="secondary-btn">Registrar usuario</button>
+          <p class="error-message register-message" id="registerMessage"></p>
+        </form>
+      </div>
+    </section>
+
+    <main class="dashboard hidden" id="dashboard">
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">Panel operativo</span>
+          <h2>Agenda de viajes</h2>
+        </div>
+        <div class="topbar-actions">
+          <span class="session-badge" id="sessionBadge"></span>
+          <button class="ghost-btn" id="logoutBtn" type="button">Cerrar sesion</button>
+        </div>
+      </header>
+
+      <section class="hero-strip">
+        <article>
+          <span class="metric-label">Ciudades</span>
+          <strong>3 destinos</strong>
+          <p>Ciudad de Mexico, Puebla y Queretaro.</p>
+        </article>
+        <article>
+          <span class="metric-label">Capacidad</span>
+          <strong>17 personas</strong>
+          <p>Limite automatico por viaje, fecha y horario.</p>
+        </article>
+        <article>
+          <span class="metric-label">Documentos</span>
+          <strong>3 salidas</strong>
+          <p>Ticket, bitacora del chofer y solicitud imprimible.</p>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <div class="form-panel">
+          <div class="panel-heading">
+            <h3>Registrar pasajero</h3>
+            <p>Captura la agenda del viaje y genera la documentacion operativa.</p>
+          </div>
+
+          <form id="tripForm" class="trip-form">
+            <div class="field-grid">
+              <label>
+                Folio de solicitud
+                <input type="text" id="requestId" placeholder="SOL-2026-001" required>
+              </label>
+              <label>
+                Nombre del paciente
+                <input type="text" id="passengerName" placeholder="Nombre completo" required>
+              </label>
+              <label>
+                Edad
+                <input type="number" id="passengerAge" min="0" max="120" placeholder="Edad" required>
+              </label>
+              <label>
+                Acompanante
+                <input type="text" id="companionName" placeholder="Opcional">
+              </label>
+              <label>
+                Ciudad destino
+                <select id="destination" required>
+                  <option value="">Selecciona una ciudad</option>
+                  <option value="Ciudad de Mexico">Ciudad de Mexico</option>
+                  <option value="Puebla">Puebla</option>
+                  <option value="Queretaro">Queretaro</option>
+                </select>
+              </label>
+              <label>
+                Fecha del viaje
+                <input type="date" id="tripDate" required>
+              </label>
+              <label>
+                Hora de salida
+                <input type="time" id="tripTime" required>
+              </label>
+              <label>
+                Chofer asignado
+                <input type="text" id="driverName" placeholder="Nombre del chofer" required>
+              </label>
+              <label>
+                Unidad
+                <input type="text" id="unitNumber" placeholder="AMB-01" required>
+              </label>
+              <label>
+                Telefono de contacto
+                <input type="tel" id="contactPhone" placeholder="555-000-0000" required>
+              </label>
+            </div>
+
+            <label>
+              Motivo del traslado
+              <textarea id="notes" rows="4" placeholder="Describe el motivo del viaje y observaciones relevantes"></textarea>
+            </label>
+
+            <div class="actions-row">
+              <button type="submit" class="primary-btn">Guardar en agenda</button>
+              <button type="button" class="secondary-btn" id="clearFormBtn">Limpiar</button>
+            </div>
+
+            <p class="status-message" id="formStatus"></p>
+          </form>
+        </div>
+
+        <aside class="side-panel">
+          <section class="mini-card">
+            <div class="panel-heading">
+              <h3>Resumen por viaje</h3>
+            <p>Consulta disponibilidad por fecha, hora y destino.</p>
+            </div>
+            <div id="travelSummary" class="summary-list"></div>
+          </section>
+
+          <section class="mini-card">
+            <div class="panel-heading">
+              <h3>Acciones rapidas</h3>
+              <p>Genera documentacion para operacion y atencion al pasajero.</p>
+            </div>
+            <div class="quick-actions">
+              <button type="button" class="secondary-btn" id="printDriverLogBtn">Imprimir bitacora</button>
+              <button type="button" class="secondary-btn" id="printRequestsBtn">Imprimir solicitudes</button>
+              <button type="button" class="ghost-btn" id="clearDataBtn">Vaciar agenda</button>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <section class="records-section">
+        <div class="panel-heading">
+          <h3>Pasajeros registrados</h3>
+          <p>Cada registro genera ticket, bitacora y solicitud asociada.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Folio</th>
+                <th>Paciente</th>
+                <th>Destino</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Chofer</th>
+                <th>Capturo</th>
+                <th>Lugar</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <section class="print-area">
+    <article class="print-sheet" id="ticketSheet"></article>
+    <article class="print-sheet" id="driverLogSheet"></article>
+    <article class="print-sheet" id="requestSheet"></article>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
