@@ -195,7 +195,7 @@ def init_db():
                     id BIGSERIAL PRIMARY KEY,
                     request_id TEXT NOT NULL UNIQUE,
                     passenger_name TEXT NOT NULL,
-                    passenger_age INTEGER NOT NULL,
+                    residencia TEXT NOT NULL,
                     companion_name TEXT,
                     destination TEXT NOT NULL,
                     trip_date TEXT NOT NULL,
@@ -229,7 +229,7 @@ def init_db():
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     request_id TEXT NOT NULL UNIQUE,
                     passenger_name TEXT NOT NULL,
-                    passenger_age INTEGER NOT NULL,
+                    residencia TEXT NOT NULL,
                     companion_name TEXT,
                     destination TEXT NOT NULL,
                     trip_date TEXT NOT NULL,
@@ -311,7 +311,7 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
                 return
             records = db.fetchall(
                 """
-                SELECT id, request_id, passenger_name, passenger_age, companion_name,
+                SELECT id, request_id, passenger_name, residencia, companion_name,
                        destination, trip_date, trip_time, driver_name, unit_number,
                        contact_phone, notes, created_at, created_by_name
                 FROM trips
@@ -352,6 +352,13 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
     def handle_api_delete(self, path: str):
         user = self.require_user()
         if not user:
+            return
+
+        if user.get("role") != "administrador":
+            self.respond_json(
+                {"error": "Solo el administrador puede eliminar registros."},
+                HTTPStatus.FORBIDDEN,
+            )
             return
 
         if path.startswith("/api/trips/"):
@@ -459,7 +466,7 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
         record = {
             "request_id": (data.get("requestId") or "").strip(),
             "passenger_name": (data.get("passengerName") or "").strip(),
-            "passenger_age": data.get("passengerAge"),
+            "residencia": data.get("residence").strip(),
             "companion_name": (data.get("companionName") or "").strip(),
             "destination": (data.get("destination") or "").strip(),
             "trip_date": (data.get("tripDate") or "").strip(),
@@ -473,7 +480,7 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
         required = [
             "request_id",
             "passenger_name",
-            "passenger_age",
+            "residencia",
             "destination",
             "trip_date",
             "trip_time",
@@ -485,11 +492,7 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
             self.respond_json({"error": "Completa todos los campos obligatorios."}, HTTPStatus.BAD_REQUEST)
             return
 
-        try:
-            passenger_age = int(record["passenger_age"])
-        except (TypeError, ValueError):
-            self.respond_json({"error": "La edad debe ser numerica."}, HTTPStatus.BAD_REQUEST)
-            return
+        
 
         occupancy = db.fetchone(
             """
@@ -512,7 +515,7 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
         inserted = db.execute(
             """
             INSERT INTO trips (
-                request_id, passenger_name, passenger_age, companion_name, destination,
+                request_id, passenger_name, residencia, companion_name, destination,
                 trip_date, trip_time, driver_name, unit_number, contact_phone, notes,
                 created_at, created_by, created_by_name
             ) VALUES ({p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p})
@@ -520,7 +523,7 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
             """ if db.engine == "postgres" else
             """
             INSERT INTO trips (
-                request_id, passenger_name, passenger_age, companion_name, destination,
+                request_id, passenger_name, residencia, companion_name, destination,
                 trip_date, trip_time, driver_name, unit_number, contact_phone, notes,
                 created_at, created_by, created_by_name
             ) VALUES ({p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p}, {p})
@@ -528,7 +531,7 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
             (
                 record["request_id"],
                 record["passenger_name"],
-                passenger_age,
+                record["residencia"],
                 record["companion_name"],
                 record["destination"],
                 record["trip_date"],
@@ -554,7 +557,7 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
             "id": trip_id,
             "request_id": record["request_id"],
             "passenger_name": record["passenger_name"],
-            "passenger_age": passenger_age,
+            "residencia": record["residencia"],
             "companion_name": record["companion_name"],
             "destination": record["destination"],
             "trip_date": record["trip_date"],

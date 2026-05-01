@@ -3,37 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agenda de Viajes Ambulancia</title>
+  <title>SISAP 24-27</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app-shell">
     <section class="login-panel" id="loginPanel">
       <div class="brand-block">
-        <span class="eyebrow">Control de traslados</span>
-        <h1>Ambulancia de enlace</h1>
-        <p>Agenda viajes, controla el cupo, genera bitacoras del chofer y emite tickets de pasajeros desde una sola pantalla.</p>
+        <span class="eyebrow">Sistema de Salud Panabá</span>
+        <h1>Dirección de Salud</h1>
+        <p>¡trabajamos con Amor al Pueblo!</p>
       </div>
 
       <div class="auth-stack">
         <form class="login-card" id="loginForm">
           <h2>Acceso</h2>
-          <p class="helper">Usuario inicial: <strong>admin</strong> | Contrasena: <strong>admin123</strong></p>
           <label>
             Usuario
             <input type="text" id="username" placeholder="Ingresa tu usuario" required>
           </label>
           <label>
-            Contrasena
-            <input type="password" id="password" placeholder="Ingresa tu contrasena" required>
+            Contraseña
+            <input type="password" id="password" placeholder="Ingresa tu contraseña" required>
           </label>
-          <button type="submit" class="primary-btn">Entrar al sistema</button>
+          <br>
+          <button type="submit" class="primary-btn">Acceder</button>
           <p class="error-message" id="loginError"></p>
         </form>
 
         <form class="login-card register-card" id="registerForm">
           <h2>Crear usuario</h2>
-          <p class="helper">Registra coordinadores con acceso propio y datos persistentes.</p>
+          <p class="helper">Registra nuevos Usuarios</p>
           <label>
             Nombre completo
             <input type="text" id="registerFullName" placeholder="Nombre del responsable" required>
@@ -43,10 +43,11 @@
             <input type="text" id="registerUsername" placeholder="Minimo 4 caracteres" required>
           </label>
           <label>
-            Contrasena
+            Contraseña
             <input type="password" id="registerPassword" placeholder="Minimo 6 caracteres" required>
           </label>
-          <button type="submit" class="secondary-btn">Registrar usuario</button>
+          <br>
+          <button type="submit" class="secondary-btn">Registrar</button>
           <p class="error-message register-message" id="registerMessage"></p>
         </form>
       </div>
@@ -55,8 +56,8 @@
     <main class="dashboard hidden" id="dashboard">
       <header class="topbar">
         <div>
-          <span class="eyebrow">Panel operativo</span>
-          <h2>Agenda de viajes</h2>
+          <span class="eyebrow">Traslados</span>
+          <h2>REGISTRO DE VIAJES</h2>
         </div>
         <div class="topbar-actions">
           <span class="session-badge" id="sessionBadge"></span>
@@ -67,8 +68,8 @@
       <section class="hero-strip">
         <article>
           <span class="metric-label">Ciudades</span>
-          <strong>3 destinos</strong>
-          <p>Ciudad de Mexico, Puebla y Queretaro.</p>
+          <strong>Destino</strong>
+          <p>Mérida, Tizimín y Valladolid.</p>
         </article>
         <article>
           <span class="metric-label">Capacidad</span>
@@ -77,7 +78,7 @@
         </article>
         <article>
           <span class="metric-label">Documentos</span>
-          <strong>3 salidas</strong>
+          <strong>Imprimibles</strong>
           <p>Ticket, bitacora del chofer y solicitud imprimible.</p>
         </article>
       </section>
@@ -86,34 +87,41 @@
         <div class="form-panel">
           <div class="panel-heading">
             <h3>Registrar pasajero</h3>
-            <p>Captura la agenda del viaje y genera la documentacion operativa.</p>
+            <p>Captura la agenda del viaje y genera la documentación.</p>
           </div>
 
           <form id="tripForm" class="trip-form">
             <div class="field-grid">
               <label>
                 Folio de solicitud
-                <input type="text" id="requestId" placeholder="SOL-2026-001" required>
+                <input type="text" id="requestId" placeholder="DS-001" required>
               </label>
               <label>
                 Nombre del paciente
                 <input type="text" id="passengerName" placeholder="Nombre completo" required>
               </label>
               <label>
-                Edad
-                <input type="number" id="passengerAge" min="0" max="120" placeholder="Edad" required>
+                Residencia
+                <select id="residence" required>
+                  <option value="">Selecciona residencia</option>
+                  <option value="Panaba">Panabá</option>
+                  <option value="Yalsihon">Yalsihón</option>
+                  <option value="Loche">Loché</option>
+                  <option value="San Francisco">San Francisco</option>
+                  <option value="San Juan">San Juan del Rio</option>
+                </select>
               </label>
               <label>
-                Acompanante
+                Acompañante
                 <input type="text" id="companionName" placeholder="Opcional">
               </label>
               <label>
                 Ciudad destino
                 <select id="destination" required>
                   <option value="">Selecciona una ciudad</option>
-                  <option value="Ciudad de Mexico">Ciudad de Mexico</option>
-                  <option value="Puebla">Puebla</option>
-                  <option value="Queretaro">Queretaro</option>
+                  <option value="Merida">Mérida</option>
+                  <option value="Valladolid">Valladolid</option>
+                  <option value="Tizimin">Tizimín</option>
                 </select>
               </label>
               <label>
@@ -134,7 +142,7 @@
               </label>
               <label>
                 Telefono de contacto
-                <input type="tel" id="contactPhone" placeholder="555-000-0000" required>
+                <input type="tel" id="contactPhone" placeholder="555-555-5555" required>
               </label>
             </div>
 
@@ -144,7 +152,7 @@
             </label>
 
             <div class="actions-row">
-              <button type="submit" class="primary-btn">Guardar en agenda</button>
+              <button type="submit" class="primary-btn">Agendar Viaje</button>
               <button type="button" class="secondary-btn" id="clearFormBtn">Limpiar</button>
             </div>
 
@@ -164,7 +172,7 @@
           <section class="mini-card">
             <div class="panel-heading">
               <h3>Acciones rapidas</h3>
-              <p>Genera documentacion para operacion y atencion al pasajero.</p>
+              <p>Genera documentacion para operación y atención al pasajero.</p>
             </div>
             <div class="quick-actions">
               <button type="button" class="secondary-btn" id="printDriverLogBtn">Imprimir bitacora</button>

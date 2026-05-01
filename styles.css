@@ -7,7 +7,7 @@
   --line: rgba(57, 74, 62, 0.12);
   --accent: #d85b38;
   --accent-dark: #9f3518;
-  --teal: #2b7468;
+  --teal: #2a7468;
   --shadow: 0 24px 60px rgba(72, 49, 23, 0.14);
   --radius: 24px;
 }
@@ -78,7 +78,7 @@ textarea {
   flex-direction: column;
   justify-content: center;
   background:
-    linear-gradient(160deg, rgba(33, 52, 41, 0.93), rgba(32, 58, 66, 0.82)),
+    linear-gradient(160deg, rgba(133, 38, 38, 0.989), rgba(133, 38, 38, 0.989)),
     var(--panel);
   color: #fff8f0;
   position: relative;

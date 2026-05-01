@@ -28,7 +28,7 @@ const requestSheet = document.getElementById("requestSheet");
 const fieldRefs = {
   requestId: document.getElementById("requestId"),
   passengerName: document.getElementById("passengerName"),
-  passengerAge: document.getElementById("passengerAge"),
+  residence: document.getElementById("residence"),
   companionName: document.getElementById("companionName"),
   destination: document.getElementById("destination"),
   tripDate: document.getElementById("tripDate"),
@@ -111,7 +111,7 @@ function normalizeRecordForPrint(record) {
     id: record.id,
     requestId: record.request_id || record.requestId,
     passengerName: record.passenger_name || record.passengerName,
-    passengerAge: record.passenger_age || record.passengerAge,
+    residence: record.residencia || record.residence,
     companionName: record.companion_name || record.companionName,
     destination: record.destination,
     tripDate: record.trip_date || record.tripDate,
@@ -173,6 +173,7 @@ function renderTable() {
     recordsTableBody.innerHTML = '<tr><td colspan="9">No hay pasajeros registrados todavia.</td></tr>';
     return;
   }
+  const canDelete = state.session?.role === "administrador";
 
   recordsTableBody.innerHTML = state.records
     .map((record) => {
@@ -191,7 +192,7 @@ function renderTable() {
             <div class="inline-actions">
               <button type="button" data-action="ticket" data-id="${record.id}" class="secondary-btn">Ticket</button>
               <button type="button" data-action="request" data-id="${record.id}" class="secondary-btn">Solicitud</button>
-              <button type="button" data-action="delete" data-id="${record.id}" class="ghost-btn">Eliminar</button>
+              ${canDelete ? `<button type="button" data-action="delete" data-id="${record.id}" class="ghost-btn">Eliminar</button>` : ""}
             </div>
           </td>
         </tr>
@@ -218,7 +219,7 @@ function renderTicket(rawRecord) {
         <div class="document-block"><strong>Folio:</strong><br>${record.requestId}</div>
         <div class="document-block"><strong>Fecha de emision:</strong><br>${new Date(record.createdAt).toLocaleString("es-MX")}</div>
         <div class="document-block"><strong>Paciente:</strong><br>${record.passengerName}</div>
-        <div class="document-block"><strong>Edad:</strong><br>${record.passengerAge}</div>
+        <div class="document-block"><strong>Residencia:</strong><br>${record.residence}</div>
         <div class="document-block"><strong>Destino:</strong><br>${record.destination}</div>
         <div class="document-block"><strong>Salida:</strong><br>${formatDateTime(record)}</div>
         <div class="document-block"><strong>Chofer:</strong><br>${record.driverName}</div>
@@ -244,7 +245,7 @@ function renderRequest(rawRecord) {
       <p>Documento generado para la elaboracion y control de solicitudes de viaje.</p>
       <div class="document-grid">
         <div class="document-block"><strong>Paciente</strong><br>${record.passengerName}</div>
-        <div class="document-block"><strong>Edad</strong><br>${record.passengerAge}</div>
+        <div class="document-block"><strong>Residencia</strong><br>${record.residence}</div>
         <div class="document-block"><strong>Destino solicitado</strong><br>${record.destination}</div>
         <div class="document-block"><strong>Fecha y hora</strong><br>${formatDateTime(record)}</div>
         <div class="document-block"><strong>Chofer asignado</strong><br>${record.driverName}</div>
@@ -284,7 +285,7 @@ function renderDriverLog() {
                       <tr>
                         <th>Folio</th>
                         <th>Paciente</th>
-                        <th>Edad</th>
+                        <th>Residencia</th>
                         <th>Acompanante</th>
                         <th>Telefono</th>
                         <th>Capturo</th>
@@ -296,7 +297,7 @@ function renderDriverLog() {
                         <tr>
                           <td>${record.request_id}</td>
                           <td>${record.passenger_name}</td>
-                          <td>${record.passenger_age}</td>
+                          <td>${record.residencia}</td>
                           <td>${record.companion_name || "No"}</td>
                           <td>${record.contact_phone}</td>
                           <td>${record.created_by_name}</td>
@@ -370,7 +371,7 @@ function buildRecordPayload() {
   return {
     requestId: fieldRefs.requestId.value.trim(),
     passengerName: fieldRefs.passengerName.value.trim(),
-    passengerAge: fieldRefs.passengerAge.value.trim(),
+    residence: fieldRefs.residence.value.trim(),
     companionName: fieldRefs.companionName.value.trim(),
     destination: fieldRefs.destination.value,
     tripDate: fieldRefs.tripDate.value,
