@@ -405,7 +405,13 @@ loginForm.addEventListener("submit", async (event) => {
     });
     state.session = result.user;
     showStatus(loginError, "", null);
-    await loadTrips();
+    toggleApp();
+    try {
+      await loadTrips();
+    } catch (error) {
+      state.session = null;
+    toggleApp();
+    }
   } catch (error) {
     showStatus(loginError, error.message, "error");
   }
@@ -425,7 +431,12 @@ registerForm.addEventListener("submit", async (event) => {
     state.session = result.user;
     registerForm.reset();
     showStatus(registerMessage, "Usuario creado y sesion iniciada.", "success");
-    await loadTrips();
+    toggleApp();
+    try {
+      await loadTrips();
+    } catch (error) {
+      showStatus(formStatus, `Usuario creado, pero no se pudo cargar la agenda: ${error.message}`, "error");
+    }
   } catch (error) {
     showStatus(registerMessage, error.message, "error");
   }
