@@ -409,10 +409,11 @@ loginForm.addEventListener("submit", async (event) => {
     try {
       await loadTrips();
     } catch (error) {
-      state.session = null;
-    toggleApp();
+      showStatus(formStatus, `Acceso correcto, pero no se pudo cargar la agenda: ${error.message}`, "error");
     }
   } catch (error) {
+    state.session = null;
+    toggleApp();
     showStatus(loginError, error.message, "error");
   }
 });
