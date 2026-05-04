@@ -58,7 +58,6 @@ async function api(path, options = {}) {
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
 
-  const data = await response.json().catch(() => ({}));
   const rawText = await response.text();
   let data = {};
 
@@ -71,7 +70,6 @@ async function api(path, options = {}) {
   }
 
   if (!response.ok) {
-    throw new Error(data.error || "Ocurrio un error inesperado.");
     throw new Error(data.error || data.rawText || `Error HTTP ${response.status}`);
   }
   return data;
