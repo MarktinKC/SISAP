@@ -5,6 +5,7 @@ import json
 import os
 import secrets
 import sqlite3
+import traceback
 from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 from http.cookies import SimpleCookie
@@ -273,25 +274,34 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
     server_version = "AmbulanceApp/2.0"
 
     def do_GET(self):
-        parsed = urlparse(self.path)
-        if parsed.path.startswith("/api/"):
-            self.handle_api_get(parsed.path)
-            return
-        self.serve_static(parsed.path)
-
+       try:
+            parsed = urlparse(self.path)
+            if parsed.path.startswith("/api/"):
+                self.handle_api_get(parsed.path)
+                return
+            self.serve_static(parsed.path)
+        except Exception as error:
+            self.handle_unexpected_error(error)
+        
     def do_POST(self):
-        parsed = urlparse(self.path)
-        if not parsed.path.startswith("/api/"):
-            self.respond_json({"error": "Ruta no encontrada."}, HTTPStatus.NOT_FOUND)
-            return
-        self.handle_api_post(parsed.path)
+        try:
+            parsed = urlparse(self.path)
+            if not parsed.path.startswith("/api/"):
+                self.respond_json({"error": "Ruta no encontrada."}, HTTPStatus.NOT_FOUND)
+                return
+            self.handle_api_post(parsed.path)
+        except Exception as error:
+            self.handle_unexpected_error(error)
 
     def do_DELETE(self):
-        parsed = urlparse(self.path)
-        if not parsed.path.startswith("/api/"):
-            self.respond_json({"error": "Ruta no encontrada."}, HTTPStatus.NOT_FOUND)
-            return
-        self.handle_api_delete(parsed.path)
+        try:
+            parsed = urlparse(self.path)
+            if not parsed.path.startswith("/api/"):
+                self.respond_json({"error": "Ruta no encontrada."}, HTTPStatus.NOT_FOUND)
+                return
+            self.handle_api_delete(parsed.path)
+        except Exception as error:
+            self.handle_unexpected_error(error)
 
     def handle_api_get(self, path: str):
         if path == "/api/health":
@@ -614,6 +624,19 @@ class AmbulanceHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(content)
 
+    def handle_unexpected_error(self, error: Exception):
+        traceback.print_exc()
+        if getattr(self, "wfile", None) is None:
+            return
+        try:
+            message = "Error interno del servidor."
+            if APP_ENV != "production":
+                message = f"Error interno del servidor: {error}"
+            self.respond_json({"error": message}, HTTPStatus.INTERNAL_SERVER_ERROR)
+        except BrokenPipeError:
+            return
+
+    
     def log_message(self, format, *args):
         return
 
